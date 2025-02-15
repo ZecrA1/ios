@@ -3,31 +3,37 @@ name: Build iOS
 on:
   push:
     branches:
-      - main  # Se ejecutará cuando hagas push a main
+      - main
   pull_request:
     branches:
-      - main  # Se ejecutará en PRs dirigidos a main
+      - main
 
 jobs:
   build_ios:
-    runs-on: macos-latest  # Usa un runner de macOS con Xcode instalado
+    runs-on: macos-latest
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4  # Clona el código en el runner
+        uses: actions/checkout@v4
+
+      - name: Verify Flutter Installation
+        run: flutter --version
+
+      - name: Move to project directory
+        run: cd my_flutter_project  # Cambia "my_flutter_project" por la carpeta correcta
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.24.5"  # Puedes especificar otra versión
+          flutter-version: "3.24.5"
 
       - name: Install dependencies
-        run: flutter pub get  # Descarga paquetes de Flutter
+        run: flutter pub get
 
       - name: Install CocoaPods dependencies
         run: |
           cd ios
-          pod install --repo-update  # Instala dependencias de iOS
+          pod install --repo-update
 
       - name: Build iOS (no codesign)
-        run: flutter build ios --no-codesign  # Compila sin firma
+        run: flutter build ios --no-codesign
